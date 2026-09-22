@@ -1,0 +1,38 @@
+ls
+ls -a
+ls readme.txt
+ls /missing
+ls -z
+cd docs/course/topic
+ls .
+tail notes.txt
+tail -n 2 notes.txt
+tail -n 0 notes.txt
+tail -n +11 notes.txt
+tail -n 99 notes.txt
+tail -n x notes.txt
+tail -n -1 notes.txt
+tail /missing
+tail /
+wc notes.txt
+wc -l notes.txt
+wc -w notes.txt
+wc -c notes.txt
+wc -m notes.txt
+wc -lwmc notes.txt
+wc /missing
+wc /
+wc -z notes.txt
+cd ..
+cd -
+cd
+cd readme.txt
+cd /missing
+history
+history 3
+history 0
+history -1
+unknown
+exit extra
+ls
+exit
