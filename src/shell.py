@@ -7,14 +7,17 @@ import socket
 class Shell:
     """Хранит состояние одного сеанса и исполняет встроенные команды."""
 
-    def __init__(self):
+    def __init__(self, prompt=None):
         """Получить реальное имя пользователя и имя компьютера."""
         self.identity = f"{getpass.getuser()}@{socket.gethostname()}"
         self.running = True
+        self.custom_prompt = prompt
 
     @property
     def prompt(self):
         """Вернуть приглашение консольного интерфейса."""
+        if self.custom_prompt is not None:
+            return self.custom_prompt
         return f"{self.identity}:~$ "
 
     def execute(self, line):

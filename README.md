@@ -13,3 +13,11 @@
 
 Запуск: `./run.sh`.
 Тесты: `python3 -m unittest discover -s tests -v`.
+
+## Этап 2
+
+Добавлены параметры `--vfs DIRECTORY`, `--prompt TEXT` и `--script FILE`.
+Стартовый скрипт показывает команды и их результаты, продолжает работу
+после ошибок. Настройки выводятся при запуске.
+
+Пример: `./run.sh --prompt "student> " --script examples/stage2.txt`.

@@ -1,0 +1,8 @@
+ls
+cd /
+unknown
+ls
+exit extra
+ls /
+exit
+never
