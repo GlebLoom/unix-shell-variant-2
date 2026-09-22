@@ -1,6 +1,7 @@
 ls
 ls -a
 ls readme.txt
+ls -- readme.txt
 ls /missing
 ls -z
 cd docs/course/topic
@@ -9,6 +10,7 @@ tail notes.txt
 tail -n 2 notes.txt
 tail -n 0 notes.txt
 tail -n +11 notes.txt
+tail -- notes.txt
 tail -n 99 notes.txt
 tail -n x notes.txt
 tail -n -1 notes.txt
@@ -20,10 +22,12 @@ wc -w notes.txt
 wc -c notes.txt
 wc -m notes.txt
 wc -lwmc notes.txt
+wc -- notes.txt
 wc /missing
 wc /
 wc -z notes.txt
 cd ..
+cd -- .
 cd -
 cd
 cd readme.txt

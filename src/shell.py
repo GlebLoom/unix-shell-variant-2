@@ -6,7 +6,7 @@ import posixpath
 import socket
 
 from src.options import CommandParser, nonnegative
-from src.vfs import VFS
+from src.vfs import MissingPath, VFS
 
 
 DEFAULT_TAIL_LINES = 10
@@ -42,6 +42,7 @@ class Shell:
         commands = {
             "ls": self.ls, "cd": self.cd, "tail": self.tail,
             "wc": self.wc, "history": self.show_history, "exit": self.exit,
+            "rm": self.rm, "mv": self.mv,
         }
         if command not in commands:
             raise ValueError(f"{command}: неизвестная команда")
@@ -126,3 +127,50 @@ class Shell:
             f"{number:4}  {line}\n" for number, line in
             enumerate(self.history[start:], start=start + 1)
         )
+
+    def rm(self, arguments):
+        """Удалить один файл или дерево; -f допускает отсутствие файла."""
+        parser = CommandParser("rm")
+        parser.add_argument("-r", "-R", action="store_true", dest="recursive")
+        parser.add_argument("-f", action="store_true", dest="force")
+        parser.add_argument("path", nargs="?")
+        options = parser.parse_args(arguments)
+        if options.path is None:
+            if options.force:
+                return ""
+            raise ValueError("rm: требуется путь")
+        if posixpath.basename(options.path.rstrip("/")) in {".", ".."}:
+            raise ValueError("rm: имена . и .. защищены")
+        try:
+            path = self.vfs.resolve(options.path, self.cwd, missing_leaf=True)
+        except MissingPath:
+            if options.force:
+                return ""
+            raise
+        self.vfs.remove(path, self.cwd, options.recursive, options.force)
+        return ""
+
+    def mv(self, arguments):
+        """Переименовать или перенести один объект; -n запрещает замену."""
+        parser = CommandParser("mv")
+        mode = parser.add_mutually_exclusive_group()
+        mode.add_argument("-n", action="store_true", dest="no_clobber")
+        mode.add_argument("-f", action="store_true")
+        parser.add_argument("source")
+        parser.add_argument("target")
+        options = parser.parse_args(arguments)
+        if posixpath.basename(options.source.rstrip("/")) in {".", ".."}:
+            raise ValueError("mv: имена . и .. защищены")
+        source = self.vfs.resolve(options.source, self.cwd)
+        target = self.vfs.resolve(options.target, self.cwd, missing_leaf=True)
+        destination = self.vfs.move(source, target, options.no_clobber)
+        self.cwd = self._moved_path(self.cwd, source, destination)
+        self.previous = self._moved_path(self.previous, source, destination)
+        return ""
+
+    @staticmethod
+    def _moved_path(path, source, destination):
+        """Обновить путь сеанса при переименовании содержащей его папки."""
+        if path == source or path.startswith(source + "/"):
+            return destination + path[len(source):]
+        return path

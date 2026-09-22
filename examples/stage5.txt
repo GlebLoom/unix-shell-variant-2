@@ -1,0 +1,38 @@
+ls /sandbox
+mv /sandbox/move.txt /sandbox/renamed.txt
+tail /sandbox/renamed.txt
+mv -n /sandbox/renamed.txt /sandbox/delete.txt
+tail /sandbox/delete.txt
+mv -f /sandbox/renamed.txt /sandbox/delete.txt
+tail /sandbox/delete.txt
+mv /sandbox/delete.txt /docs
+ls /docs
+rm /docs/delete.txt
+rm -f /missing
+rm -f /missing/child
+rm -f
+rm /missing
+rm /docs
+rm -r /
+mv / /root
+mv /docs /docs/course/new
+mv /readme.txt /readme.txt
+mv /readme.txt /absent/new.txt
+mv -- /readme.txt /-readme.txt
+mv -- /-readme.txt /readme.txt
+rm -z /readme.txt
+rm -- /sandbox/missing.txt
+cd /docs/course/topic
+mv /docs /materials
+ls
+tail notes.txt
+rm -rf /materials
+cd /
+rm -r /materials
+rm -R /sandbox
+ls
+rm
+mv /missing /new
+mv -z /readme.txt /other.txt
+history 5
+exit

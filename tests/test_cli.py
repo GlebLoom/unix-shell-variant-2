@@ -55,6 +55,30 @@ class CliTests(unittest.TestCase):
         self.assertEqual(invoke(input_text="exit\n").returncode, 0)
         self.assertEqual(invoke().returncode, 0)
 
+    def test_invalid_vfs_and_script_encoding(self):
+        """Ошибки источников обрабатываются без traceback."""
+        with tempfile.TemporaryDirectory() as directory:
+            file = Path(directory) / "file"
+            file.write_bytes(b"\xff\xfe")
+            bad_vfs = invoke("--vfs", str(file))
+            bad_script = invoke("--script", str(file))
+        for result in [bad_vfs, bad_script]:
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("Ошибка", result.stderr)
+            self.assertNotIn("Traceback", result.stderr)
+
+    def test_script_returns_to_interactive_input(self):
+        """Скрипт без exit передаёт управление REPL с той же VFS."""
+        with tempfile.TemporaryDirectory() as directory:
+            script = Path(directory) / "start.txt"
+            script.write_text("cd /docs\n", encoding="utf-8")
+            result = invoke(
+                "--script", str(script), input_text="ls\nexit\n",
+            )
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("russian.txt", result.stdout)
+        self.assertIn(":/docs$ ", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

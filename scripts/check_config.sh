@@ -1,10 +1,8 @@
 #!/bin/sh
-set -eu
-project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
-cd "$project_dir"
-./run.sh --help
-./run.sh --vfs . --prompt 'stage2> ' \
-    --script examples/stage2.txt </dev/null && exit 1
-./run.sh --vfs . --prompt '' \
-    --script examples/stage2.txt </dev/null && exit 1
-exit 0
+. "$(dirname -- "$0")/common.sh"
+expect_status 0 ./run.sh --help
+expect_status 0 ./run.sh
+expect_status 1 ./run.sh --vfs examples/vfs/minimal --prompt 'stage2> ' \
+    --script examples/stage2.txt
+expect_status 1 ./run.sh --vfs examples/vfs/several --prompt '' \
+    --script examples/stage2.txt

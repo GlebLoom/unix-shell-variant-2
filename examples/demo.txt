@@ -1,0 +1,11 @@
+ls -a
+cd /docs/course/topic
+tail -n 2 notes.txt
+wc -lwc notes.txt
+cd /
+mv /sandbox/move.txt /sandbox/renamed.txt
+tail /sandbox/renamed.txt
+rm /sandbox/delete.txt
+ls /sandbox
+history 4
+exit
