@@ -3,15 +3,18 @@
 import getpass
 import socket
 
+from src.vfs import VFS
+
 
 class Shell:
     """Хранит состояние одного сеанса и исполняет встроенные команды."""
 
-    def __init__(self, prompt=None):
+    def __init__(self, prompt=None, vfs=None):
         """Получить реальное имя пользователя и имя компьютера."""
         self.identity = f"{getpass.getuser()}@{socket.gethostname()}"
         self.running = True
         self.custom_prompt = prompt
+        self.vfs = vfs if vfs is not None else VFS()
 
     @property
     def prompt(self):

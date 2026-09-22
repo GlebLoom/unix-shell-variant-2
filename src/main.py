@@ -6,6 +6,10 @@ from pathlib import Path
 import sys
 
 from src.shell import Shell
+from src.vfs import VFS
+
+
+DEFAULT_VFS = Path(__file__).resolve().parents[1] / "examples/vfs/deep"
 
 
 def run_line(shell, line, location=""):
@@ -39,7 +43,10 @@ def parse_config(arguments=None):
         description="Эмулятор UNIX-оболочки. Вариант 2.",
         allow_abbrev=False,
     )
-    parser.add_argument("--vfs", help="Директория-источник VFS")
+    parser.add_argument(
+        "--vfs", default=str(DEFAULT_VFS),
+        help="Директория-источник VFS (по умолчанию examples/vfs/deep)",
+    )
     parser.add_argument("--prompt", help="Точное приглашение к вводу")
     parser.add_argument("--script", help="Стартовый скрипт UTF-8")
     return parser.parse_args(arguments)
@@ -64,7 +71,12 @@ def main(arguments=None):
     print("Конфигурация:", flush=True)
     for key, value in vars(config).items():
         print(f"{key}={json.dumps(value, ensure_ascii=False)}", flush=True)
-    shell = Shell(prompt=config.prompt)
+    try:
+        vfs = VFS.from_directory(config.vfs)
+    except (OSError, ValueError) as error:
+        print(f"Ошибка загрузки VFS: {error}", file=sys.stderr)
+        return 1
+    shell = Shell(prompt=config.prompt, vfs=vfs)
     status = 0
     if config.script:
         try:

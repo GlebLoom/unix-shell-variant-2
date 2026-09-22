@@ -1,0 +1,8 @@
+ls
+ls /
+cd /docs/course/topic
+cd /
+unknown
+exit extra
+ls
+exit
